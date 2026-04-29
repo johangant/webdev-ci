@@ -20,6 +20,14 @@ on:
       disallowed_functions_dirs:
         required: true
         type: string
+      unit_tests_dirs:
+        required: false
+        type: string
+        default: ''
+      unit_tests_phpunit_config:
+        required: false
+        type: string
+        default: 'web/core/phpunit.xml.dist'
       ignore_dirs:
         required: false
         type: string
@@ -148,6 +156,48 @@ jobs:
           chmod +x /tmp/phpcs.sh
 
           exec /tmp/phpcs.sh "${PROJECT_ROOT}" "${{ inputs.coding_standards_dirs }}" "${{ inputs.ignore_dirs }}"
+
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    needs: build
+    if: inputs.unit_tests_dirs != ''
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download build workspace
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.BUILD_ARTIFACT_NAME }}
+
+      - name: Restore vendor bin permissions
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -d vendor/bin ]; then
+            chmod +x vendor/bin/* || true
+          fi
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ inputs.php_version }}
+          extensions: mbstring, xml, gd
+          coverage: none
+          tools: composer
+
+      - name: Run PHPUnit unit tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "${PROJECT_ROOT}"
+          php vendor/bin/phpunit \
+            -c "${{ inputs.unit_tests_phpunit_config }}" \
+            ${{ inputs.unit_tests_dirs }}
 
   phpstan-deprecated:
     name: PHPStan deprecated code
