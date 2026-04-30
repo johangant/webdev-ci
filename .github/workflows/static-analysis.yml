@@ -46,6 +46,7 @@ env:
   COMPOSER_PROCESS_TIMEOUT: 0
   COMPOSER_NO_AUDIT: 1
   BUILD_ARTIFACT_NAME: build-workspace
+  SYMFONY_DEPRECATIONS_HELPER: weak
 
 jobs:
   build:
