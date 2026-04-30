@@ -20,7 +20,7 @@ on:
       disallowed_functions_dirs:
         required: true
         type: string
-      unit_tests_dirs:
+      phpunit_args:
         required: false
         type: string
         default: ''
@@ -161,7 +161,7 @@ jobs:
     name: Unit tests
     runs-on: ubuntu-latest
     needs: build
-    if: inputs.unit_tests_dirs != ''
+    if: inputs.phpunit_args != ''
 
     steps:
       - name: Checkout code
@@ -209,7 +209,7 @@ jobs:
 
           php vendor/bin/phpunit \
             -c "${PHPUNIT_CONFIG}" \
-            ${{ inputs.unit_tests_dirs }}
+            ${{ inputs.phpunit_args }}
 
   phpstan-deprecated:
     name: PHPStan deprecated code
