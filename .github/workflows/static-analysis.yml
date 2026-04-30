@@ -201,6 +201,12 @@ jobs:
             PHPUNIT_CONFIG="${PROJECT_ROOT}/${PHPUNIT_CONFIG}"
           fi
 
+          echo "Using PHPUnit config: ${PHPUNIT_CONFIG}"
+          if [[ ! -f "${PHPUNIT_CONFIG}" ]]; then
+            echo "PHPUnit config file not found: ${PHPUNIT_CONFIG}" >&2
+            exit 1
+          fi
+
           php vendor/bin/phpunit \
             -c "${PHPUNIT_CONFIG}" \
             ${{ inputs.unit_tests_dirs }}
