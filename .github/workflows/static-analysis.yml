@@ -207,6 +207,14 @@ jobs:
             exit 1
           fi
 
+          BROWSERTEST_OUTPUT_DIRECTORY="${PROJECT_ROOT}/web/sites/default/simpletest/browser_output"
+          mkdir -p "${BROWSERTEST_OUTPUT_DIRECTORY}"
+          chmod -R u+rwX "${PROJECT_ROOT}/web/sites/default/simpletest"
+          if [[ ! -w "${BROWSERTEST_OUTPUT_DIRECTORY}" ]]; then
+            echo "Browser test output directory is not writable: ${BROWSERTEST_OUTPUT_DIRECTORY}" >&2
+            exit 1
+          fi
+
           php vendor/bin/phpunit \
             -c "${PHPUNIT_CONFIG}" \
             ${{ inputs.phpunit_args }}
