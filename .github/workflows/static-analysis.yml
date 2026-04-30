@@ -195,8 +195,14 @@ jobs:
         run: |
           set -euo pipefail
           cd "${PROJECT_ROOT}"
+
+          PHPUNIT_CONFIG="${{ inputs.unit_tests_phpunit_config }}"
+          if [[ "${PHPUNIT_CONFIG}" != /* ]]; then
+            PHPUNIT_CONFIG="${PROJECT_ROOT}/${PHPUNIT_CONFIG}"
+          fi
+
           php vendor/bin/phpunit \
-            -c "${{ inputs.unit_tests_phpunit_config }}" \
+            -c "${PHPUNIT_CONFIG}" \
             ${{ inputs.unit_tests_dirs }}
 
   phpstan-deprecated:
